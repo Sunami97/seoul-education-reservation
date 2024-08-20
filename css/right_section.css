@@ -1,0 +1,149 @@
+.right-section {
+    /* border: 1px solid green; */
+    width: 55%;
+    height: 100%;
+}
+
+.right-section .back-button-container {
+    display: none;
+}
+
+.back-button {
+    font-size: 3rem;
+    color: #5E81F4;
+}
+
+.right-section-title {
+    width: 100%;
+    height: 150px;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+}
+
+.right-section-title h2 {
+    color: #3E4958;
+    text-align: end;
+    font-size: 2rem;
+}
+
+.highlight-text {
+    color: #5E81F4;
+}
+
+.right-section-content {
+    /* border: 1px solid red; */
+    height: calc(100% - 150px);
+    max-height: 1000px;
+    width: 100%;
+    flex-grow: 1;
+    display: grid;
+    grid-template-rows: 1fr;
+    gap: 1rem;
+}
+
+.map-container {
+    /* border: 1px solid red; */
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.map {
+    height: 100%;
+    width: 100%;
+}
+
+.description-container {
+    /* border: 1px solid green; */
+    grid-template-rows: 1fr auto;
+    gap: 1rem;
+    transition: height 0.5s ease-out, opacity 0.5s ease-out;
+    height: 0;
+    opacity: 0;
+    overflow: hidden;
+}
+
+.text-container {
+    border: 1.8px solid #5E81F4;
+    border-radius: 20px;
+    padding: 1.5rem;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+}
+
+.description-text {
+    height: 100%;
+    padding-right: 1.2rem;
+}
+
+.description-text.scroll-bar::-webkit-scrollbar {
+    width: 8px;
+}
+
+.reservation-button-container {
+    display: flex;
+    justify-content: end;
+}
+
+.reservation-button {
+    height: 44px;
+    font-size: 1rem;
+    text-align: center;
+    padding: 5px 20px;
+    background-color: #5E81F4;
+    border: 1px solid #ccc;
+    color: #FFFFFF;
+    border-radius: 20px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+}
+
+.right-section-content.active-description {
+    grid-template-rows: 1.5fr 1fr;
+}
+
+.right-section-content.active-description .description-container {
+    display: grid;
+    height: 100%;
+    opacity: 1;
+}
+
+@media (max-width: 767px) {
+    .right-section {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: #FFFFFF;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+        transform: translateX(100%);
+        visibility: hidden;
+        transition: transform 0.5s ease;
+    }
+
+    .right-section.show {
+        visibility: visible;
+        transform: translateX(0);
+    }
+
+    .right-section .back-button-container {
+        /* border: 1px solid blue; */
+        display: flex;
+        width: 100%;
+        height: 100px;
+
+        justify-content: end;
+        align-items: center;
+    }
+
+    .right-section-title {
+        display: none;
+    }
+}
