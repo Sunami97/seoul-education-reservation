@@ -249,7 +249,6 @@ const fetchData = async (url) => {
     } catch (error) {
         console.error('API 요청 에러:', error);
 
-        // 사용자 친화적인 메시지 처리
         let errorMessage = '예약 정보를 가져오는 도중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.';
 
         if (error.message.includes('HTTP error')) {
