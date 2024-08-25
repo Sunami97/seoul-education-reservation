@@ -1,18 +1,16 @@
-const API_KEY = config.seoulApiKey;
 const empty = ' ';
+const defaultStartIndex = 1;
+const defaultEndIndex = 15;
+
 const queryParams = {
+    startIndex: defaultStartIndex,
+    endIndex: defaultEndIndex,
     category: empty,
     title: empty,
     target: empty,
     area: empty
 };
 
-const defaultStartIndex = 1;
-const defaultEndIndex = 15;
-
-let startIndex = defaultStartIndex;
-let endIndex = defaultEndIndex;
-let url = `http://openapi.seoul.go.kr:8088/${API_KEY}/json/ListPublicReservationEducation/${startIndex}/${endIndex}/${queryParams.category}/${queryParams.title}/${queryParams.target}/${queryParams.area}`;
 let reservationMap = new Map();
 
 let totalDataCount = 0; // 총 데이터 개수
@@ -46,11 +44,6 @@ const mediaQuery = window.matchMedia('(max-width: 767px)');
 
 let currentReservationLink = "";
 let isSearching = false;
-
-const updateUrl = () => {
-    url = `http://openapi.seoul.go.kr:8088/${API_KEY}/json/ListPublicReservationEducation/${startIndex}/${endIndex}/${queryParams.category}/${queryParams.title}/${queryParams.target}/${queryParams.area}`;
-    console.log('API 요청 주소 : ', url)
-}
 
 const decodeHTMLEntities = (str) => {
     const txt = document.createElement('textarea');
@@ -163,9 +156,8 @@ const createItem = (item) => {
 }
 
 const updatePageIndex = () => {
-    startIndex = (currentPage - 1) * pageSize + 1;
-    endIndex = currentPage * pageSize;
-    updateUrl();
+    queryParams.startIndex = (currentPage - 1) * pageSize + 1;
+    queryParams.endIndex = currentPage * pageSize;
 }
 
 const renderPagination = () => {
@@ -234,9 +226,16 @@ const renderItem = (reservationList) => {
     $itemList.appendChild(fragment);
 };
 
-const fetchData = async (url) => {
+const fetchData = async () => {
     try {
-        const response = await fetch(url);
+        const response = await fetch('/api/seoul', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(queryParams) // JSON 형태로 변환하여 본문에 포함
+        });
+
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
@@ -272,7 +271,7 @@ const fetchReservationData = async () => {
     $rightSectionContent.classList.remove("active-description");
 
     $loading.style.display = 'block';
-    const reservationData = await fetchData(url);
+    const reservationData = await fetchData();
     $loading.style.display = 'none';
 
     if (reservationData.error) {
@@ -315,11 +314,10 @@ const onClickCategoryButton = async (targetCategoryButton) => {
     $searchInput.value = '';
     queryParams.title = empty;
     queryParams.area = empty;
-    startIndex = defaultStartIndex;
-    endIndex = defaultEndIndex;
+    queryParams.startIndex = defaultStartIndex;
+    queryParams.endIndex = defaultEndIndex;
 
     currentPage = 1;
-    updateUrl();
     moveMap(defaultLatitude, defaultLongitude, defaultMapLevel);
     await fetchReservationData();
 
@@ -345,11 +343,10 @@ const searchReservation = async () => {
         queryParams.title = empty;
     }
 
-    startIndex = defaultStartIndex;
-    endIndex = defaultEndIndex;
+    queryParams.startIndex = defaultStartIndex;
+    queryParams.endIndex = defaultEndIndex;
 
     currentPage = 1;
-    updateUrl();
     moveMap(defaultLatitude, defaultLongitude, defaultMapLevel);
     await fetchReservationData();
     isSearching = isSearching = false;

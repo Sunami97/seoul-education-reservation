@@ -1,4 +1,4 @@
-const KAKAO_API_KEY = config.kakaoMapApiKey;
+const KAKAO_API_KEY = '0cb66e6cf1cc65e31c91e59a46186c39';
 const defaultLatitude = 37.5665;
 const defaultLongitude = 126.9780;
 const defaultMapLevel = 8;
