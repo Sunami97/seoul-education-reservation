@@ -233,7 +233,7 @@ const fetchData = async () => {
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(queryParams) // JSON 형태로 변환하여 본문에 포함
+            body: JSON.stringify(queryParams)
         });
 
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
