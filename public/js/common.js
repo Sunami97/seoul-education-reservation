@@ -1,10 +1,9 @@
-const empty = ' ';
-const defaultStartIndex = 1;
-const defaultEndIndex = 15;
+const empty = '%20';
+const defaultStartPage = 1;
 
 const queryParams = {
-    startIndex: defaultStartIndex,
-    endIndex: defaultEndIndex,
+    page: 1,
+    size: 15,
     category: empty,
     title: empty,
     target: empty,
@@ -17,7 +16,7 @@ let totalDataCount = 0; // 총 데이터 개수
 let pageSize = 15; // 가져오는 데이터 개수
 let totalPages = 0; // 총 페이지 수
 let visiblePageCount = 5; // 한 번에 보이는 페이지 번호 수
-let currentPage = 1;
+
 
 const $logo = document.getElementById('logo');
 const $categoryButtonContainer = document.getElementById('categoryButtonContainer');
@@ -155,46 +154,36 @@ const createItem = (item) => {
     return $item;
 }
 
-const updatePageIndex = () => {
-    queryParams.startIndex = (currentPage - 1) * pageSize + 1;
-    queryParams.endIndex = currentPage * pageSize;
-}
-
 const renderPagination = () => {
     $pagination.innerHTML = '';
 
-    totalPages = Math.ceil(totalDataCount / pageSize);
+    totalPages = Math.ceil(totalDataCount / queryParams.size);
 
     if (totalPages <= 0) totalPages = 1;
 
     const fragment = document.createDocumentFragment();
     const prevButton = createElement('button', 'move-button');
     prevButton.innerHTML = '<i class="fa-solid fa-chevron-left"></i>';
-    prevButton.disabled = currentPage === 1;
+    prevButton.disabled = queryParams.page === 1;
     prevButton.addEventListener('click', () => {
-        if (currentPage > 1) {
-            currentPage--;
-
-            updatePageIndex();
+        if (queryParams.page > 1) {
+            queryParams.page--;
             fetchReservationData();
         }
     });
     fragment.appendChild(prevButton);
 
-    const startPage = Math.max(1, currentPage - Math.floor(visiblePageCount / 2));
+    const startPage = Math.max(1, queryParams.page - Math.floor(visiblePageCount / 2));
     const endPage = Math.min(totalPages, startPage + visiblePageCount - 1);
 
     for (let i = startPage; i <= endPage; i++) {
         const button = createElement('span', 'dot', i);
-        if (i === currentPage) {
+        if (i === queryParams.page) {
             button.classList.add('active');
         }
         button.addEventListener('click', () => {
-            if (currentPage === i) return;
-
-            currentPage = i;
-
-            updatePageIndex();
+            if (queryParams.page === i) return;
+            queryParams.page = i;
             fetchReservationData();
         });
         fragment.appendChild(button);
@@ -202,12 +191,10 @@ const renderPagination = () => {
 
     const nextButton = createElement('button', 'move-button');
     nextButton.innerHTML = '<i class="fa-solid fa-chevron-right"></i>';
-    nextButton.disabled = currentPage === totalPages;
+    nextButton.disabled = queryParams.page === totalPages;
     nextButton.addEventListener('click', () => {
-        if (currentPage < totalPages) {
-            currentPage++;
-
-            updatePageIndex();
+        if (queryParams.page < totalPages) {
+            queryParams.page++;
             fetchReservationData();
         }
     });
@@ -228,14 +215,8 @@ const renderItem = (reservationList) => {
 
 const fetchData = async () => {
     try {
-        const response = await fetch('/api/seoul', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(queryParams)
-        });
-
+        const apiUrl = `/api/seoul?page=${queryParams.page}&size=${queryParams.size}&category=${queryParams.category}&title=${queryParams.title}&target=${queryParams.target}&area=${queryParams.area}`;
+        const response = await fetch(apiUrl);
         if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
 
         const data = await response.json();
@@ -314,10 +295,8 @@ const onClickCategoryButton = async (targetCategoryButton) => {
     $searchInput.value = '';
     queryParams.title = empty;
     queryParams.area = empty;
-    queryParams.startIndex = defaultStartIndex;
-    queryParams.endIndex = defaultEndIndex;
+    queryParams.page = 1;
 
-    currentPage = 1;
     moveMap(defaultLatitude, defaultLongitude, defaultMapLevel);
     await fetchReservationData();
 
@@ -343,10 +322,7 @@ const searchReservation = async () => {
         queryParams.title = empty;
     }
 
-    queryParams.startIndex = defaultStartIndex;
-    queryParams.endIndex = defaultEndIndex;
-
-    currentPage = 1;
+    queryParams.page = 1;
     moveMap(defaultLatitude, defaultLongitude, defaultMapLevel);
     await fetchReservationData();
     isSearching = isSearching = false;

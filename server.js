@@ -6,14 +6,20 @@ const app = express()
 const port = 3000
 app.use(express.json());
 
-app.post('/api/seoul', async (req, res) => {
+app.get('/api/seoul', async (req, res) => {
     try {
-        const { startIndex, endIndex, category, title, target, area } = req.body;
-        console.log(req.body);
-        url = `http://openapi.seoul.go.kr:8088/${process.env.SEOUL_API_KEY}/json/ListPublicReservationEducation/${startIndex}/${endIndex}/${category}/${title}/${target}/${area}`;
+        const { page = 1, size = 15, category = ' ', title = ' ', target = ' ', area = ' ' } = req.query;
+
+        const startIndex = (page - 1) * size + 1;
+        const endIndex = page * size;
+
+        const url = `http://openapi.seoul.go.kr:8088/${process.env.SEOUL_API_KEY}/json/ListPublicReservationEducation/${startIndex}/${endIndex}/${category}/${title}/${target}/${area}`;
+        console.log(`Requesting URL: ${url}`);
+
         const response = await axios.get(url);
         res.send(response.data);
     } catch (error) {
+        console.error('Error fetching data from Seoul API:', error);
         res.status(500).send('Internal Server Error');
     }
 });
