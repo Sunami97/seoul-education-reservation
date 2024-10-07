@@ -60,7 +60,6 @@ main {
 main section {
     /* border: 1px solid red; */
     height: 100%;
-    overflow: hidden;
 }
 
 /* 커스텀 스크롤 바 */
