@@ -46,6 +46,7 @@
     outline: none;
     padding: 0.5rem;
     flex: 0 1 auto;
+    cursor: pointer;
 }
 
 .search-box input {
@@ -206,6 +207,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
 }
 
 .dot {
